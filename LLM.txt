@@ -1,0 +1,53 @@
+主流LLM三大框架：链式思考(CoT)、思维树(ToT)、检索增强生成(RAG)
+主流微调方法：
+fine-tuning ：以用户的消息作为输入，人工智能培训师的响应作为目标。（微调）
+RLHF-tuning : 通过强化学习和高阶微调。（没懂）
+
+
+
+prompt engineer:
+zero-shot提示法:不给大模型任何提示，直接提问，让大模型自己做决策
+few-show提示法:在提问前给一个示例和解释让它学习和模仿，从而一定程度上赋予泛化能力。
+代码提示工程:code prompting（未写）
+思维链（chain of thought)
+Zero-shot-CoT提示方法：在提示词尾部追加一句"let's think step by step"
+Few-shot-CoT提示方法：在one-shot给的示例的情况下再追加思维链的解读，更好的推导任务。
+CoT改良方法: Least-To-most prompting(llm提示法):
+整个提示过程分为两个部分：第一个阶段是自上而下的分解问题(Decompose Question into subquestion),第二个阶段是自下而上的依次解决问题(Sequentially Solve Subquestion)
+通过提示模板"To solve __, we need to first solve"来引导模型创建子问题。
+思维树
+提示模板“假设三个不同的专家来回答这个问题，所有专家写下他们思考这个问题的第一个步骤，然后与大家分型。然后，所有专家写下他们思考的下一个步骤并分享。以此类推，知道所有专家写完他们的所有步骤。只要大家发现专家的步骤出错，就让这位专家离开。请问..."
+RAG
+通过一个信息搜索组件和文本生成模型结合。文本生成模型用来将搜索到的相关信息生成prompt
+langchain
+正余弦匹配，mongodb存储包含上下文和分块文档的向量。
+支持多个大模型的接口
+retriever
+AI Agent:
+概念：是一种能够感知环境，进行决策和执行动作的智能实体。可以独立思考调用工具不需要人类指定每一步操作。
+
+
+llm流式推理：
+在大模型将每个字生成出来的时候就返回，让文字一个个的显示，可以让客户体验更佳。
+一般流失推理将函数迭代换成生成器，从而进行流式推理。
+
+知识库+llama3 英文
+知识库+通义千文 中文
+
+使用lora微调模型
+通过vllm框架，docker部署到gpu服务器上作为服务
+通过gradio设计webui。
+
+
+dockers 拉取镜像，entrypoint和cmd默认执行语句，也可用来传递参数，cmd会被覆盖，entrypoint不会。
+dockers创建容器时指定名字，这样产生的僵尸容器就能察觉并删除。
+
+
+
+function_call
+一种是已有框架可以直接将function作为tools嵌入llm，prompt不用添加，不知道是否是封装好的prompt
+另一种是react类型，在prompt中让模型思考并且react使用函数，并且对函数的描述也在react当中。
+不知道这两种方法是否是相同的？
+https://juejin.cn/post/7374297192130248743
+function call 和 react 框架不一样，react是让大模型生成一个工作流，要消耗的token较多。function call 是专门在模型中训练过，让模型可以自己识别function并按照特定格式输出，消耗tokens较少。
+

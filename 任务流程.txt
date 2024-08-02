@@ -1,0 +1,6 @@
+docker部署llm，使用vllm框架，导入通义千问模型
+设置参数
+构建prompt，并在llm中实现function calling
+function calling 实质上就是制作一个可以调用tools的agent
+构建rag
+实现多智能体构建一套workflow

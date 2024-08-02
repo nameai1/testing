@@ -1,0 +1,10 @@
+fastapi库
+
+路径参数是访问的时候{item_id},在访问时路径参数会传参，需要在async def( item_id : int ) ,装饰器是@app.get("{item_id})
+
+查询参数是在函数中获取参数，async def( q:str|None = None )， 意思为有没有都可以 @app.get
+
+请求体是使用Pydantic的BaseModel 来统一传入数据模型，通过class Item（BaseModel） 来在basemodel子类中定义参数，然后将参数赋值。
+@app.post
+
+共同使用@app.put
