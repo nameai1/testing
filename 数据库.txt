@@ -13,4 +13,10 @@ delete/truncate/drop三者区别：
 delete:删表数据，保留主键记录和表结构。truncate:删表数据和主键记录，保留表结构。drop：全部删除。
 
 非关系型数据库：存储数据不是按队和列存储，为字符串存储（{id:1,name:jim})
-主要用Redis，读写性能碾压mysql但耗资源，
+主要用Redis，读写性能碾压mysql但耗资源，主要是键值对存储
+mongodb：存储长文本
+
+
+oracle：
+
+
