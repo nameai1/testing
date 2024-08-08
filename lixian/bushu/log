@@ -1,0 +1,33 @@
+#CUDA_VISIBLE_DEVICES=3 python -m vllm.entrypoints.openai.api_server \ --model /home/cloud/yuwendi/qwen/Qwen-7B-Chat/ \ --trust-remote-code \ --port 30003 \ --gpu-memory-utilization  0.5 \ --tensor-parallel-size 1 \ --served-model-name Qwen/Qwen-14B-Chat-Int4-hf \ --quantization gptq
+python -m vllm.entrypoints.openai.api_server  --host 0.0.0.0 --port 8000 --model /home/cloud/yuwendi/qwen/Qwen-7B-Chat/ --served-model-name Qwen --trust-remote-code
+
+
+docker run \
+  -d \ # 使用守护态运行，即在后台运行
+  --name llm \ # 给容器设置一个名字，叫做 llm
+  --gpus all \ # 分配给容器使用所有的 GPU 资源，适用于需要进行大量计算的应用
+  -it \ # 以交互模式运行容器，并分配一个伪终端
+  --ipc=host \ # 设置容器的 IPC（进程间通信）命名空间为宿主机的 IPC 命名空间
+  -p 10080:8080 \ # 将容器的 8080 端口映射到宿主机的 10080 端口，外部可以通过宿主机的这个端口访问容器
+  -v /data/.xjycd/LLMs/Qwen-7B-Chat/:/Qwen-7B-Chat \ # 将宿主机的 `/data/.xjycd/LLMs/Qwen-7B-Chat/` 目录挂载到容器的 `/Qwen-7B-Chat` 目录，实现数据持久化和共享
+  vllm-server:0.1.2 \ # 指定要运行的镜像名和标签，这里是 vllm-server 的 0.1.2 版本
+  --tensor-parallel-size 2 \ # 设置张量并行的大小为 2，这是深度学习模型训练的一个参数，用于在多个 GPU 间分配工作
+  --model /Qwen-7B-Chat \ # 指定模型的路径，这里模型存放在容器的 `/Qwen-7B-Chat` 目录
+  --trust-remote-code 
+
+## 不加注释的版本：
+docker run -d --name ywd_llm --gpus all -it --ipc=host -p :8080 -v /home/cloud/yuwendi/qwen/Qwen-7B-Chat/:/Qwen-7B-Chat vllm/vllm-openai:v0.5.2 --tensor-parallel-size 2 --model /Qwen-7B-Chat --trust-remote-code
+docker run -t -v /home/cloud/yuwendi/qwen/Qwen-7B-Chat/:/Qwen-7B-Chat vllm/vllm-openai:v0.5.2 --model /Qwen-7B-Chat/ --trust-remote-code --tensor-parallel-size 2 --gpus all
+
+
+docker run --name=ywd1_vllm --gpus='"device=0,1,2,3"' --ipc=host -p 8085:8080 -v /home/data/models/Qwen2-72B-Instruct/:/Qwen-7B-Chat vllm/vllm-openai:v0.4.1 --model /Qwen-7B-Chat/  --tensor-parallel-size 4 --served-model-name qwen --trust-remote-code --port 8080 --host 0.0.0.0
+
+curl http://localhost:8080/v1/chat/completions \
+-H "Content-Type: application/json" \
+-d '{
+  "model": "qwen",
+  "messages": [
+    {"role": "system", "content": "You are a helpful assistant."},
+    {"role": "user", "content": "Who won the world series in 2020?"}
+  ]
+}'
